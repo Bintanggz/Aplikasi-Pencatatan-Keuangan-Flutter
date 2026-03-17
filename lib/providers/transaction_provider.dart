@@ -6,6 +6,10 @@ final databaseServiceProvider = Provider<DatabaseService>((ref) {
   return DatabaseService();
 });
 
+final selectedMonthProvider = StateProvider<DateTime>((ref) {
+  return DateTime.now();
+});
+
 class TransactionNotifier extends Notifier<List<Transaction>> {
   @override
   List<Transaction> build() {
@@ -35,24 +39,33 @@ final transactionProvider = NotifierProvider<TransactionNotifier, List<Transacti
 });
 
 // Derived Providers
-final totalBalanceProvider = Provider<double>((ref) {
+final filteredTransactionsProvider = Provider<List<Transaction>>((ref) {
   final transactions = ref.watch(transactionProvider);
+  final selectedMonth = ref.watch(selectedMonthProvider);
+  
+  return transactions.where((tx) {
+    return tx.date.year == selectedMonth.year && tx.date.month == selectedMonth.month;
+  }).toList();
+});
+
+final totalBalanceProvider = Provider<double>((ref) {
+  final transactions = ref.watch(filteredTransactionsProvider);
   return transactions.fold(0.0, (sum, tx) => tx.isExpense ? sum - tx.amount : sum + tx.amount);
 });
 
 final totalIncomeProvider = Provider<double>((ref) {
-  final transactions = ref.watch(transactionProvider);
+  final transactions = ref.watch(filteredTransactionsProvider);
   return transactions.where((tx) => !tx.isExpense).fold(0.0, (sum, tx) => sum + tx.amount);
 });
 
 final totalExpenseProvider = Provider<double>((ref) {
-  final transactions = ref.watch(transactionProvider);
+  final transactions = ref.watch(filteredTransactionsProvider);
   return transactions.where((tx) => tx.isExpense).fold(0.0, (sum, tx) => sum + tx.amount);
 });
 
 // Provides aggregated expense data per category for the chart.
 final expenseCategoryChartProvider = Provider<Map<String, double>>((ref) {
-  final transactions = ref.watch(transactionProvider);
+  final transactions = ref.watch(filteredTransactionsProvider);
   final expenses = transactions.where((tx) => tx.isExpense);
   
   final Map<String, double> data = {};

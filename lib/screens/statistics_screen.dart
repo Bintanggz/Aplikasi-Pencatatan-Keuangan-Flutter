@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/transaction_provider.dart';
 import '../widgets/expense_pie_chart.dart';
+import '../widgets/month_selector.dart';
 import 'package:intl/intl.dart';
 
 class StatisticsScreen extends ConsumerWidget {
@@ -24,6 +25,8 @@ class StatisticsScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  const MonthSelector(),
+                  const SizedBox(height: 16),
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),

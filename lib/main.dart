@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:finnote/providers/transaction_provider.dart';
-import 'package:finnote/screens/main_navigation_screen.dart';
+import 'package:finnote/screens/auth_screen.dart';
 import 'package:finnote/services/database_service.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
       ),
-      home: const MainNavigationScreen(),
+      home: const AuthScreen(),
     );
   }
 }

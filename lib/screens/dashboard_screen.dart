@@ -5,6 +5,7 @@ import 'package:finnote/widgets/expense_pie_chart.dart';
 import 'package:finnote/screens/add_transaction_screen.dart';
 import 'package:finnote/screens/transaction_list_screen.dart';
 import 'package:finnote/utils/constants.dart';
+import 'package:finnote/widgets/month_selector.dart';
 import 'package:intl/intl.dart';
 
 class DashboardScreen extends ConsumerWidget {
@@ -29,6 +30,8 @@ class DashboardScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const MonthSelector(),
+              const SizedBox(height: 16),
               // Balance Card
               Card(
                 elevation: 4,

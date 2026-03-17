@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:finnote/providers/transaction_provider.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pengaturan'),
@@ -43,10 +45,22 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.download),
             title: const Text('Ekspor Data (CSV)'),
-            onTap: () {
-               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Fitur ekspor sedang dalam pengembangan.')),
-              );
+            onTap: () async {
+               try {
+                 final dbService = ref.read(databaseServiceProvider);
+                 final path = await dbService.exportToCSV();
+                 if (context.mounted) {
+                   ScaffoldMessenger.of(context).showSnackBar(
+                     SnackBar(content: Text('Berhasil diekspor ke: $path'), duration: const Duration(seconds: 4)),
+                   );
+                 }
+               } catch (e) {
+                 if (context.mounted) {
+                   ScaffoldMessenger.of(context).showSnackBar(
+                     SnackBar(content: Text('Gagal mengekspor data: $e')),
+                   );
+                 }
+               }
             },
           ),
           const Divider(),

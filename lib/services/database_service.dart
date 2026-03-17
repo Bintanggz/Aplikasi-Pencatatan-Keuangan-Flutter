@@ -1,4 +1,7 @@
+import 'dart:io';
+import 'package:csv/csv.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 import '../models/transaction.dart';
 
 class DatabaseService {
@@ -71,5 +74,34 @@ class DatabaseService {
     for (var tx in dummyData) {
       await box.put(tx.id, tx);
     }
+  }
+
+  Future<String> exportToCSV() async {
+    final transactions = getTransactions();
+    List<List<dynamic>> rows = [];
+    
+    // Header
+    rows.add(["ID", "Category", "Amount", "Type", "Note", "Date"]);
+    
+    // Data
+    for (var tx in transactions) {
+      rows.add([
+        tx.id,
+        tx.category,
+        tx.amount,
+        tx.isExpense ? "Expense" : "Income",
+        tx.note,
+        tx.date.toIso8601String()
+      ]);
+    }
+
+    String csv = const ListToCsvConverter().convert(rows);
+
+    final directory = await getApplicationDocumentsDirectory();
+    final path = '${directory.path}/finnote_export_${DateTime.now().millisecondsSinceEpoch}.csv';
+    final file = File(path);
+    await file.writeAsString(csv);
+    
+    return path;
   }
 }
